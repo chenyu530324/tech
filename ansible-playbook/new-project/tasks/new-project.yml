@@ -94,3 +94,8 @@
     - "git commit -m \"Init {{project_name}} code base \""
     - "git remote add origin {{github_home}}/{{github_account}}/{{project_name}}.git"
     - "git push origin master"
+
+- name: Open project with IntelliJ IDEA
+  shell: open {{project_name}}.ipr
+  args:
+    chdir: "{{root_project_path}}"
