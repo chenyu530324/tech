@@ -64,33 +64,33 @@
   args:
     chdir: "{{root_project_path}}"
 
-#- name: Create new git hub repository
-#  uri:
-#    url: "{{github_api_baseUrl}}{{create_repository_endpoint_url}}"
-#    method: POST
-#    headers:
-#      Accept: application/vnd.github.v3+json
-#    user: "{{github_account}}"
-#    password: "{{github_password}}"
-#    force_basic_auth: yes
-#    body: "{\"name\": \"{{projectName}}\"}"
-#    body_format: json
-#    validate_certs: false
-#    status_code: 201
-#    return_content: yes
-#  register: repositories
-#
-#- name: Print response
-#  debug:
-#    msg: "{{repositories}}"
-#
-#- name: Init git repository
-#  command: "{{item}}"
-#  args:
-#    chdir: "{{root_project_path}}"
-#  with_items:
-#    - "git init"
-#    - "git add ."
-#    - "git commit -m \"Init {{projectName}} code base \""
-#    - "git remote add origin {{github_home}}/{{github_account}}/{{projectName}}.git"
-#    - "git push origin master"
+- name: Create new git hub repository
+  uri:
+    url: "{{github_api_baseUrl}}{{create_repository_endpoint_url}}"
+    method: POST
+    headers:
+      Accept: application/vnd.github.v3+json
+    user: "{{github_account}}"
+    password: "{{github_password}}"
+    force_basic_auth: yes
+    body: "{\"name\": \"{{projectName}}\"}"
+    body_format: json
+    validate_certs: false
+    status_code: 201
+    return_content: yes
+  register: repositories
+
+- name: Print response
+  debug:
+    msg: "{{repositories}}"
+
+- name: Init git repository
+  command: "{{item}}"
+  args:
+    chdir: "{{root_project_path}}"
+  with_items:
+    - "git init"
+    - "git add ."
+    - "git commit -m \"Init {{projectName}} code base \""
+    - "git remote add origin {{github_home}}/{{github_account}}/{{projectName}}.git"
+    - "git push origin master"
