@@ -1,4 +1,4 @@
-projectType: java-application
+projectType: "java-application"
 config_file_list:
   - {template: "spring-boot-build.gradle", name: "build.gradle", path: "{{root_project_path}}"}
   - {template: "checkstyle.gradle", name: "checkstyle.gradle", path: "{{plugin_folder}}"}

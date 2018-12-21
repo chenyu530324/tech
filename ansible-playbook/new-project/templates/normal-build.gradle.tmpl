@@ -1,13 +1,13 @@
-apply plugin: 'java'
-apply plugin: 'idea'
+apply plugin: "java"
+apply plugin: "idea"
 apply from: "plugin/findbugs.gradle"
 apply from: "plugin/checkstyle.gradle"
 apply from: "plugin/jacoco.gradle"
 
-group = 'com.thoughtworks.tw'
-version = '0.0.1-SNAPSHOT'
+group = "com.thoughtworks.tw"
+version = "0.0.1-SNAPSHOT"
 sourceCompatibility = 1.8
-idea.project.vcs = 'Git'
+idea.project.vcs = "Git"
 
 repositories {
     mavenCentral()
@@ -19,15 +19,15 @@ repositories {
 //compile,runTime,testCompile,testRuntime
 dependencies {
     compile(
-            'ch.qos.logback:logback-classic:1.1.3',
-            'org.slf4j:slf4j-api:1.7.9',
-            'org.slf4j:jcl-over-slf4j:1.7.9'
+            "ch.qos.logback:logback-classic:1.1.3",
+            "org.slf4j:slf4j-api:1.7.9",
+            "org.slf4j:jcl-over-slf4j:1.7.9"
     )
     testCompile(
-            'junit:junit:4.12'
+            "junit:junit:4.12"
     )
 }
 
 test {
-    jvmArgs '-noverify'
+    jvmArgs "-noverify"
 }
