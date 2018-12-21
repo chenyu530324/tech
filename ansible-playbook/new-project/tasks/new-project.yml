@@ -18,7 +18,7 @@
   when: projectStat.stat.exists == false
 
 - name: Init gradle project
-  command: "gradle init --type {{projectType}} --project-name {{project_name}} --dsl groovy --test-framework junit --package {{default_package}}"
+  command: "gradle init --type {{project_type}} --project-name {{project_name}} --dsl groovy --test-framework junit --package {{default_package}}"
   args:
     chdir: "{{root_project_path}}"
 
@@ -39,7 +39,7 @@
     path: "{{root_project_path}}/build.gradle"
     regexp: 'com.thoughtworks.tw.Application'
     replace: '{{default_package}}.Application'
-  when: projectType == "java-application"
+  when: project_type == "java-application"
 
 - name: Delete auto create java file
   file:
@@ -48,7 +48,7 @@
   with_items:
     - { path: "{{root_project_path}}/src/main/java/com/thoughtworks/{{project_name}}/Library.java"}
     - { path: "{{root_project_path}}/src/test/java/com/thoughtworks/{{project_name}}/LibraryTest.java"}
-  when: projectType == "java-library"
+  when: project_type == "java-library"
 
 - name: Delete auto create java file
   file:
@@ -57,7 +57,7 @@
   with_items:
     - { path: "{{root_project_path}}/src/main/java/com/thoughtworks/{{project_name}}/App.java"}
     - { path: "{{root_project_path}}/src/test/java/com/thoughtworks/{{project_name}}/AppTest.java"}
-  when: projectType == "java-application"
+  when: project_type == "java-application"
 
 - name: Gradle idea
   command: "./gradlew idea"
