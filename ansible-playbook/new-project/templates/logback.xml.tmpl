@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="10 seconds">
+    <appender name="FILE_APPEND" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>./logs/%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}] %-5level [%file:%line] - %msg%n</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}] %-5level [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.thoughtworks.template.mapper" level="DEBUG" />
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_APPEND"/>
+    </root>
+</configuration>

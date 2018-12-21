@@ -1,0 +1,13 @@
+apply plugin: 'findbugs'
+
+findbugs {
+    toolVersion = "3.0.1"
+    sourceSets = [sourceSets.main]
+    ignoreFailures = true
+    reportsDir = file("$project.buildDir/findbugsReports")
+    effort = "max"
+    showProgress = true
+    reportLevel = "high"
+    visitors = ["FindSqlInjection", "SwitchFallthrough"]
+    omitVisitors = ["FindNonShortCircuit"]
+}

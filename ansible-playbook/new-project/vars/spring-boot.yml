@@ -1,0 +1,14 @@
+projectType: java-application
+config_file_list:
+  - {template: "spring-boot-build.gradle", name: "build.gradle", path: "{{root_project_path}}"}
+  - {template: "checkstyle.gradle", name: "checkstyle.gradle", path: "{{plugin_folder}}"}
+  - {template: "findbugs.gradle", name: "findbugs.gradle", path: "{{plugin_folder}}"}
+  - {template: "jacoco.gradle", name: "jacoco.gradle", path: "{{plugin_folder}}"}
+  - {template: "checkstyle-main.xml", name: "checkstyle-main.xml", path: "{{checkstyle_folder}}"}
+  - {template: "checkstyle-test.xml", name: "checkstyle-test.xml", path: "{{checkstyle_folder}}"}
+  - {template: "checkstyle-suppressions.xml", name: "checkstyle-suppressions.xml", path: "{{checkstyle_folder}}"}
+  - {template: "source-import-control.xml", name: "source-import-control.xml", path: "{{checkstyle_folder}}"}
+  - {template: ".gitignore", name: ".gitignore", path: "{{root_project_path}}"}
+  - {template: "logback.xml", name: "logback.xml", path: "{{root_project_path}}/src/main/resources"}
+  - {template: "application.properties", name: "application.properties", path: "{{root_project_path}}/src/main/resources"}
+  - {template: "application-default.properties", name: "application-default.properties", path: "{{root_project_path}}/src/main/resources"}

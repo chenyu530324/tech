@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  vars:
+  vars_files:
+    - "./vars/main.yml"
+    - "./vars/normal.yml"
+
+  vars_prompt:
+    - name: github_password
+      prompt: "Please enter password for github account {{github_account}}"
+      default: ""
+
+  tasks:
+    - include_tasks: ./tasks/new-project.yml
