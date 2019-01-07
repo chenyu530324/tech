@@ -1,5 +1,5 @@
 project_name: "{{projectName}}"
-workspace: "/Users/jichen/workspace/github"
+workspace: "/Users/jichen/workspace"
 root_project_path: "{{workspace}}/{{project_name}}"
 plugin_folder: "{{root_project_path}}/plugin"
 checkstyle_folder: "{{root_project_path}}/config/checkstyle"
