@@ -73,7 +73,7 @@
     user: "{{github_account}}"
     password: "{{github_password}}"
     force_basic_auth: yes
-    body: "{\"name\": \"{{project_name}}\"}"
+    body: "{\"name\": \"{{project_name}}\",\"private\": {{private_repository}}}"
     body_format: json
     validate_certs: false
     status_code: 201
