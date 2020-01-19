@@ -13,8 +13,10 @@
     state: directory
   with_items:
     - {path: "{{root_project_path}}"}
-    - {path: "{{plugin_folder}}"}
+    - {path: "{{gradle_folder}}"}
     - {path: "{{checkstyle_folder}}"}
+    - {path: "{{dependency_check_folder}}"}
+    - {path: "{{root_project_path}}/src/main/java/com/thoughtworks/{{projectName}}/controller"}
   when: projectStat.stat.exists == false
 
 - name: Init gradle project
@@ -34,11 +36,32 @@
     regexp: '^group = '
     line: 'group = "{{default_package}}"'
 
-- name: Replace main class package
-  replace:
+- name: Write main class
+  lineinfile:
     path: "{{root_project_path}}/build.gradle"
-    regexp: 'com.thoughtworks.tw.Application'
-    replace: '{{default_package}}.Application'
+    regexp: '^mainClassName = '
+    line: 'mainClassName = "{{default_package}}.Application"'
+  when: project_type == "java-application"
+
+- name: Write Application package
+  lineinfile:
+    path: "{{root_project_path}}/src/main/java/com/thoughtworks/{{projectName}}/Application.java"
+    regexp: '^package '
+    line: 'package {{default_package}};'
+  when: project_type == "java-application"
+
+- name: Write Application package
+  lineinfile:
+    path: "{{root_project_path}}/src/main/java/com/thoughtworks/{{projectName}}/controller/TestController.java"
+    regexp: '^package '
+    line: 'package {{default_package}}.controller;'
+  when: project_type == "java-application"
+
+- name: Write Application package
+  lineinfile:
+    path: "{{root_project_path}}/Dockerfile"
+    regexp: '^ADD '
+    line: 'ADD build/libs/{{projectName}}.jar  app.jar'
   when: project_type == "java-application"
 
 - name: Delete auto create java file

@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  vars:
+    GIT_URL: "{{ url }}"
+    BRANCH_NAME: "{{ branch }}"
+    PIPELINE_NAME: "{{ pipe_name}}"
+
+  tasks:
+    - include_tasks: ./init-jenkins.yml

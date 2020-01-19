@@ -1,0 +1,25 @@
+- name: start jenkins
+  command: docker run -u 0 -v /var/run/docker.sock:/var/run/docker.sock -p 8081:8080 -d idolice/jenkins:latest
+
+- name: generate jenkins-config from template
+  template:
+    src: ./jenkins-config.xml.j2
+    dest: ./jenkins-config.xml
+    mode: u+rwx
+- name: wait jenkins start
+  wait_for:
+    host: 127.0.0.1
+    port: 8081
+- pause:
+    seconds: 20
+- name: download jenkins-cli.jar
+  uri:
+    url: http://localhost:8081/jnlpJars/jenkins-cli.jar
+    method: GET
+    dest: ./jenkins-cli.jar
+
+- name: create pipeline
+  shell: "/opt/jdk1.8.0_131/bin/java -jar jenkins-cli.jar -s http://localhost:8081 -auth admin:admin create-job {{pipe_name}}<jenkins-config.xml"
+
+
+

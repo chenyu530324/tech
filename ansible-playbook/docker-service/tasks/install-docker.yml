@@ -1,0 +1,20 @@
+- name: Init gradle project
+  command: "docker -v"
+  register: version
+  ignore_errors: yes
+
+- name: debug version
+  debug:
+    msg: "{{version}}"
+
+- name: debug ansible_distribution
+  debug:
+    msg: "{{ansible_distribution}}"
+
+- name: Install docker if docker not intalled
+  command: "{{item}}"
+  with_items:
+      - "sudo yum install docker -y"
+      - "sudo service docker start"
+      - "sudo docker run hello-world"
+  when: '"Docker version" not in version'

@@ -1,0 +1,91 @@
+- name: create ec2 instance as jenkins server
+  hosts: localhost
+  vars:
+    access_key_id: "{{ id }}"
+    access_key_secret: "{{ secret }}"
+    region: us-east-2
+  tasks:
+    - name: lauch instance
+      ec2:
+        key_name: zookeeper
+        instance_type: t2.medium
+        image: ami-0d542ef84ec55d71c
+        wait: yes
+        region: "{{ region }}"
+        group_id: sg-07a01b141278cc32f
+        vpc_subnet_id: subnet-861b02ee
+        assign_public_ip: yes
+        aws_access_key: "{{ access_key_id }}"
+        aws_secret_key: "{{ access_key_secret }}"
+        instance_tags:
+          Name: zookeeper-jenkins
+      register: ec2
+
+    - name: Add new instance to host group
+      add_host:
+        hostname: "{{ item.public_ip }}"
+        groupname: launched
+      loop: "{{ ec2.instances }}"
+
+    - name: Wait for SSH to come up
+      wait_for:
+        host: "{{ item.public_ip }}"
+        port: 22
+        state: started
+        delay: 60
+        timeout: 360
+      loop: "{{ ec2.instances }}"
+      ignore_errors: yes
+
+    - name: Write the new ec2 instance host key to known hosts
+      shell: "ssh-keyscan -H {{ item.public_ip }} >> ~/.ssh/known_hosts"
+      loop: "{{ ec2.instances }}"
+#- name: add jenkins server
+#  hosts: localhost
+#  tasks:
+#    - name: add ...
+#      add_host:
+#        hostname: 18.191.83.254
+#        groups: launched
+
+- name: install docker and start jenkins
+  hosts: launched
+  connection: ssh
+  remote_user: ec2-user
+  gather_facts: no
+  become: yes
+  vars:
+    host: launched
+    GIT_URL: "{{ url }}"
+    BRANCH_NAME: "{{ branch }}"
+    PIPELINE_NAME: "{{ pipe_name}}"
+    download_url: http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz
+    download_folder: /opt
+    java_version_path: jdk1.8.0_131
+    java_version_path_short: jdk-8u131
+    java_name: "{{download_folder}}/{{java_version_path}}"
+    java_archive: "{{download_folder}}/{{java_version_path_short}}-linux-x64.tar.gz"
+  tasks:
+    - name: install docker
+      yum:
+        name='docker'
+        state=latest
+    - name: service docker
+      service:
+        name=docker
+        state=started
+        enabled=yes
+    - name: Download Java
+      command: "wget -q -O {{java_archive}} --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{download_url}} creates={{java_archive}}"
+
+    - name: Unpack archive
+      command: "tar -zxf {{java_archive}} -C {{download_folder}} creates={{java_name}}"
+
+    - name: Fix ownership
+      file: "state=directory path={{java_name}} owner=root group=root recurse=yes"
+
+    - name: Make Java available for system
+      command: 'alternatives --install "/usr/bin/java" "java" "{{java_name}}/bin/java" 2000'
+
+    - include_tasks: ./init-jenkins.yml
+

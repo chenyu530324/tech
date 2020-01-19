@@ -1,65 +1,105 @@
 buildscript {
     ext {
-        springBootVersion = "2.1.0.RELEASE"
+        springBootVersion="2.1.0.RELEASE"
     }
 
     repositories {
         mavenCentral()
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
+
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.22.0"
+        classpath "org.owasp:dependency-check-gradle:5.0.0-M2"
     }
 }
 
-apply plugin: "java"
-apply plugin: "idea"
-apply plugin: "org.springframework.boot"
-apply plugin: "io.spring.dependency-management"
-apply from: "plugin/findbugs.gradle"
-apply from: "plugin/checkstyle.gradle"
-apply from: "plugin/jacoco.gradle"
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'application'
+//apply from: "${rootProject.projectDir}/gradle/findbugs.gradle"
+apply from: "${rootProject.projectDir}/gradle/checkstyle/checkstyle.gradle"
+//apply from: "${rootProject.projectDir}/gradle/jacoco.gradle"
+apply from: "${rootProject.projectDir}/gradle/docker-image.gradle"
 
-group = "com.thoughtworks.tw"
-version = "1.0-SNAPSHOT"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven { url "https://repo.spring.io/snapshot" }
-    maven { url "https://repo.spring.io/milestone" }
-    maven { url "https://repo1.maven.org/maven2/" }
 }
+
+mainClassName = "com.blackwork.relationnet.api.Application"
 
 //compile,runtime,testCompile,testRuntime
 dependencies {
     compile group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
     compile group: "org.slf4j", name: "slf4j-api", version: "1.7.9"
     compile group: "org.slf4j", name: "jcl-over-slf4j", version: "1.7.9"
-    compile group: "org.springframework.boot", name: "spring-boot-starter",version: "2.1.0.RELEASE"
-    compile group: "org.springframework.boot", name: "spring-boot-starter-web",version: "2.1.0.RELEASE"
-    compile group: "io.springfox", name: "springfox-swagger2", version: "2.8.0"
-    compile group: "io.springfox", name: "springfox-swagger-ui", version: "2.8.0"
+    compile group: "org.springframework.boot", name: "spring-boot-starter", version: "${springBootVersion}"
+    compile group: "org.springframework.boot", name: "spring-boot-starter-web", version: "${springBootVersion}"
+    compile group: "org.springframework.boot", name: "spring-boot-devtools", version: "${springBootVersion}"
+    compile group: "org.springframework.boot", name: "spring-boot-starter-cache", version: "${springBootVersion}"
+    compile group: "org.springframework.boot", name: "spring-boot-starter-actuator", version: "${springBootVersion}"
     compile group: "org.mapstruct", name: "mapstruct", version: "1.2.0.Final"
     compile group: "commons-io", name: "commons-io", version: "2.6"
     compile group: "org.apache.commons", name: "commons-lang3", version: "3.7"
-    compile group: "org.springframework.boot", name: "spring-boot-devtools",version: "2.1.0.RELEASE"
-    compile group: "org.mybatis.spring.boot", name: "mybatis-spring-boot-starter", version: "1.3.2"
-    runtime group: "mysql", name: "mysql-connector-java",version: "8.0.13"
-    testCompile group: "junit", name: "junit", version: "4.12"
-    testCompile group: "org.springframework.boot", name: "spring-boot-starter-test", version: "2.1.0.RELEASE"
-    testCompile group: "org.easymock", name: "easymock", version: "3.5.1"
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
 
+    testCompile group: "org.springframework.boot", name: "spring-boot-starter-test", version: "2.1.0.RELEASE"
+    testCompile group: "junit", name: "junit", version: "4.12"
+    testCompile group: "org.easymock", name: "easymock", version: "3.5.1"
 }
 
-task startServer (type: JavaExec){
-    if (project.hasProperty("appArgs")) {
-        args Eval.me(appArgs)
+sourceSets {
+    intgTest {
+        compileClasspath += sourceSets.main.output + sourceSets.test.output
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output
     }
-    description = "Secure algorythm testing"
-    main = "com.thoughtworks.tw.Application"
-    classpath = sourceSets.main.runtimeClasspath
+
+    apiTest {
+        compileClasspath += sourceSets.main.output + sourceSets.test.output
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+    }
+}
+
+
+configurations {
+    intgTestImplementation.extendsFrom testImplementation
+    intgTestRuntimeOnly.extendsFrom testRuntimeOnly
+    apiTestImplementation.extendsFrom testImplementation
+    apiTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+task intgTest(type: Test) {
+    description = 'Run integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.intgTest.output.classesDirs
+    classpath = sourceSets.intgTest.runtimeClasspath
+    shouldRunAfter test
+}
+
+
+task apiTest(type: Test) {
+    description = 'Run api tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.apiTest.output.classesDirs
+    classpath = sourceSets.apiTest.runtimeClasspath
+    shouldRunAfter intgTest
+}
+
+check.dependsOn intgTest
+check.dependsOn apiTest
+
+bootJar {
+    launchScript()
+}
+
+wrapper {
+    gradleVersion = '5.2.1'
 }

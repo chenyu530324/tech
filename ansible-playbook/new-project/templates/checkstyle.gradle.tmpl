@@ -1,7 +1,7 @@
 apply plugin: 'checkstyle'
 
 ext {
-    checkstyleConfigDir = file("${rootProject.projectDir}/config/checkstyle")
+    checkstyleConfigDir = file("${rootProject.projectDir}/gradle/checkstyle")
     checkstyleMainFile = file("${checkstyleConfigDir}/checkstyle-main.xml")
     checkstyleTestFile = file("${checkstyleConfigDir}/checkstyle-test.xml")
 }

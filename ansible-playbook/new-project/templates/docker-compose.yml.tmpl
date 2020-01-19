@@ -1,0 +1,35 @@
+version: "3"
+services:
+  server:
+    build: .
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+    ports:
+      - "8083:8083"
+    networks:
+      - webnet
+  db:
+    image: mysql:5.7.25
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 300M
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      PMA_HOST: mysql
+    networks:
+      - webnet
+
+networks:
+  webnet:
+

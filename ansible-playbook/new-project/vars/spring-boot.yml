@@ -1,14 +1,27 @@
 project_type: "java-application"
 config_file_list:
-  - {template: "spring-boot-build.gradle", name: "build.gradle", path: "{{root_project_path}}"}
-  - {template: "checkstyle.gradle", name: "checkstyle.gradle", path: "{{plugin_folder}}"}
-  - {template: "findbugs.gradle", name: "findbugs.gradle", path: "{{plugin_folder}}"}
-  - {template: "jacoco.gradle", name: "jacoco.gradle", path: "{{plugin_folder}}"}
+  #check style config
   - {template: "checkstyle-main.xml", name: "checkstyle-main.xml", path: "{{checkstyle_folder}}"}
   - {template: "checkstyle-test.xml", name: "checkstyle-test.xml", path: "{{checkstyle_folder}}"}
   - {template: "checkstyle-suppressions.xml", name: "checkstyle-suppressions.xml", path: "{{checkstyle_folder}}"}
   - {template: "source-import-control.xml", name: "source-import-control.xml", path: "{{checkstyle_folder}}"}
+  - {template: "import_control_1_0.dtd", name: "import_control_1_0.dtd", path: "{{checkstyle_folder}}"}
+  - {template: "checkstyle.gradle", name: "checkstyle.gradle", path: "{{checkstyle_folder}}"}
+
+  #dependency check
+  - {template: "dependency-check.gradle", name: "dependency-check.gradle", path: "{{dependency_check_folder}}"}
+  - {template: "suppression.xml", name: "suppression.xml", path: "{{dependency_check_folder}}"}
+
+  - {template: "spring-boot-build.gradle", name: "build.gradle", path: "{{root_project_path}}"}
+  - {template: "Dockerfile", name: "Dockerfile", path: "{{root_project_path}}"}
+  - {template: "JenkinsFile", name: "JenkinsFile", path: "{{root_project_path}}"}
+  - {template: "findbugs.gradle", name: "findbugs.gradle", path: "{{gradle_folder}}"}
+  - {template: "jacoco.gradle", name: "jacoco.gradle", path: "{{gradle_folder}}"}
+  - {template: "docker-image.gradle", name: "docker-image.gradle", path: "{{gradle_folder}}"}
   - {template: ".gitignore", name: ".gitignore", path: "{{root_project_path}}"}
   - {template: "logback.xml", name: "logback.xml", path: "{{root_project_path}}/src/main/resources"}
   - {template: "application.properties", name: "application.properties", path: "{{root_project_path}}/src/main/resources"}
   - {template: "application-default.properties", name: "application-default.properties", path: "{{root_project_path}}/src/main/resources"}
+  - {template: "Application.java", name: "Application.java", path: "{{root_project_path}}/src/main/java/com/thoughtworks/{{projectName}}"}
+  - {template: "docker-compose.yml", name: "docker-compose.yml", path: "{{root_project_path}}"}
+  - {template: "TestController.java", name: "TestController.java", path: "{{root_project_path}}/src/main/java/com/thoughtworks/{{projectName}}/controller"}
